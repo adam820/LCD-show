@@ -1,3 +1,10 @@
+OS_NAME=$(cat /etc/os-release | grep -iE "^ID=" | awk -F"=" '{print $2}')
+if [[ OS_NAME == "fedora" ]]; then
+  PKGTOOL="dnf"
+else
+  PKGTOOL="apt-get"
+fi
+
 i=1
 for lines in `cat ./boot/mark`
 do
@@ -9,58 +16,57 @@ done
 #echo "$var1"
 
 j=$(uname -n)
-if test "$var1" = "0" -a "$1" != "lite" -a "$2" != "lite";then
+if test "$var1" = "0" -a "$1" != "lite" -a "$2" != "lite"; then
 
-if test "$j" != "retropie" ;then
-sudo apt-get install xserver-xorg-input-evdev
-sudo cp -rf /usr/share/X11/xorg.conf.d/10-evdev.conf /usr/share/X11/xorg.conf.d/45-evdev.conf
-fi
+  if test "$j" != "retropie" ;then
+    sudo apt-get install xserver-xorg-input-evdev
+    sudo cp -rf /usr/share/X11/xorg.conf.d/10-evdev.conf /usr/share/X11/xorg.conf.d/45-evdev.conf
+  fi
 
-if test "$j" = "retropie" ;then
-sudo cp -rf ./nes /home/pi/RetroPie/roms/
-fi
+  if test "$j" = "retropie" ;then
+    sudo cp -rf ./nes /home/pi/RetroPie/roms/
+  fi
 
-echo "1" > ./boot/mark
-sudo dpkg -i -B ./xinput-calibrator_0.7.5-1_armhf.deb
+  echo "1" > ./boot/mark
+  sudo dpkg -i -B ./xinput-calibrator_0.7.5-1_armhf.deb
 
-sudo apt-get install cmake -y
-cd ./rpi-fbcp/build/
-sudo cmake ..
-sudo make
-sudo install fbcp /usr/local/bin/fbcp
-cd ../../
-sudo mkdir -p /usr/share/X11/xorg.conf.d
+  sudo apt-get install cmake -y
+  cd ./rpi-fbcp/build/
+  sudo cmake ..
+  sudo make
+  sudo install fbcp /usr/local/bin/fbcp
+  cd ../../
+  sudo mkdir -p /usr/share/X11/xorg.conf.d
 
-elif test "$var1" = "0" -a "$1" = "lite" ;then
-echo "1" > ./boot/mark
-echo "No touch driver installled"
-echo "No fbcp driver installled"
-sudo mkdir -p /usr/share/X11/xorg.conf.d
-
+elif test "$var1" = "0" -a "$1" = "lite" ; then
+  echo "1" > ./boot/mark
+  echo "No touch driver installled"
+  echo "No fbcp driver installled"
+  sudo mkdir -p /usr/share/X11/xorg.conf.d
 fi
 
 sudo cp -rf ./etc/rc.local /etc/rc.local
 
 if test "$1" = "0" -o "$#" = "0" -o "$2" = "0"; then
-sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5-270  /usr/share/X11/xorg.conf.d/99-calibration.conf
-sudo cp ./boot/config-4-800x480.txt /boot/config.txt
-echo "LCD configure 0"
+  sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5-270  /usr/share/X11/xorg.conf.d/99-calibration.conf
+  sudo cp ./boot/config-4-800x480.txt /boot/config.txt
+  echo "LCD configure 0"
 elif test "$1" = "lite" -a  "$#" = "1"; then
-sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5-270  /usr/share/X11/xorg.conf.d/99-calibration.conf
-sudo cp ./boot/config-4-800x480.txt /boot/config.txt
-echo "LCD configure 0"
+  sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5-270  /usr/share/X11/xorg.conf.d/99-calibration.conf
+  sudo cp ./boot/config-4-800x480.txt /boot/config.txt
+  echo "LCD configure 0"
 elif test "$1" = "90" -o "$2" = "90"; then
-sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5-180  /usr/share/X11/xorg.conf.d/99-calibration.conf
-sudo cp ./boot/config-4-800x480.txt-90 /boot/config.txt
-echo "LCD configure 90"
+  sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5-180  /usr/share/X11/xorg.conf.d/99-calibration.conf
+  sudo cp ./boot/config-4-800x480.txt-90 /boot/config.txt
+  echo "LCD configure 90"
 elif test "$1" = "180" -o "$2" = "180";then
-sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5-90  /usr/share/X11/xorg.conf.d/99-calibration.conf
-sudo cp ./boot/config-4-800x480.txt-180 /boot/config.txt
-echo "LCD configure 180"
+  sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5-90  /usr/share/X11/xorg.conf.d/99-calibration.conf
+  sudo cp ./boot/config-4-800x480.txt-180 /boot/config.txt
+  echo "LCD configure 180"
 elif test "$1" = "270" -o "$2" = "270";then
-sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5  /usr/share/X11/xorg.conf.d/99-calibration.conf
-sudo cp ./boot/config-4-800x480.txt-270 /boot/config.txt
-echo "LCD configure 270"
+  sudo cp -rf ./etc/X11/xorg.conf.d/99-calibration.conf-5  /usr/share/X11/xorg.conf.d/99-calibration.conf
+  sudo cp ./boot/config-4-800x480.txt-270 /boot/config.txt
+  echo "LCD configure 270"
 fi
 
 
